@@ -1,36 +1,40 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const clientes = require('./banco-dados');
+const dados = require('./banco-dados');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
-
+ 
 app.get('/clientes', (req,res) => {
-   res.json(clientes);
+   res.json(dados.clientes);
 });
 
-app.get('/clientes/:id', (req, res) => {
-    res.json(req.user)
+app.get('/clientes/:index', (req, res) => {
+    const { index } = req.params;
+    res.json(dados.clientes[index]);
 });
 
 app.post('/clientes', (req, res) => {
-    const {newClient} = req.body;
-    clientes.push(newClient);
-    res.json(clientes);
+    let id = req.body.id;
+    let nome = req.body.nome;
+    let endereco = req.body.endereco;
+    let email = req.body.email;
+    dados.clientes[id] = { id, nome, endereco, email };
+    res.json(dados.clientes[id]);
 })
 
 app.patch('/clientes/:index', (req, res) => {
     const{ index } = req.params;
     const { name } = req.body;
-    clientes[index] = name;
-    res.json(clientes);
+    dados.clientes[index] = name;
+    res.json(dados.clientes);
 })
 
 app.delete('/clientes/:index', (req, res) => {
     const{ index } = req.params;
-    clientes.splice(index, 1);
+    dados.splice(index, 1);
     res.send();
-})
+});
 
 app.listen(port);
